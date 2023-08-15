@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration form</title>
+</head>
+<style>
+    input#name:invalid:focus {
+        border: 1px solid red;
+    }
+</style>
+
+<body>
+    <form id="user-form">
+        <label for="name">Name</label>
+        <input required type="text" id="name" name="name">
+        <br>
+        <label for="email">Email</label>
+        <input required type="email" id="email" name="email">
+        <br>
+        <label for="password">Password</label>
+        <input required type="password" id="password" name="password">
+        <br>
+        <label for="dob">Date of Birth</label>
+        <input required type="date" id="dob" name="dob" >
+
+        <br>
+        <input type="checkbox" id="acceptTerms" name="acceptTerms">
+        <label for="acceptTerms">I accept the terms & Conditions</label>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <div
+        class="relative bg-white px-6 mt-5 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10">
+        <div class="mx-auto">
+            <h2 class="text-3xl text-center font-bold leading-tight">Entries</h2>
+            <div class="divide-y divide-gray-300/50" id="user-entries"></div>
+        </div>
+        <script>
+            let userForm = document.getElementById("user-form");
+                const retrieveEntries = () => {
+                    let entries = localStorage.getItem("user-entries");
+                    if (entries) { entries = JSON.parse(entries); }
+                    else { entries = []; }
+                    return entries;
+                }
+
+                window.onload = function () {
+                    var date = new Date();
+                    var dd = date.getDate();
+                    var mm = date.getMonth() + 1;
+                    var yyyy = date.getFullYear();
+                    if (dd < 10) {
+                        dd = "0" + dd;
+                    }
+                    if (mm < 10) {
+                        mm = "0" + mm;
+                    }
+                    minYear = yyyy - 55;
+                    maxYear = yyyy - 18;
+
+                    var min = minYear + "-" + mm + "-" + dd;
+                    var max = maxYear + "-" + mm + "-" + dd;
+
+                    document.getElementById("dob").setAttribute("min", min);
+                    document.getElementById("dob").setAttribute("max", max);
+                };
+
+
+                let userEntries = retrieveEntries();
+                const displayEntries = () => {
+                    const entries = retrieveEntries();
+                    const tableEntries = entries.map((entry) => {
+                        const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
+                        const emailCell = `<td class='border px-4 py-2'>${entry.email}</td>`;
+                        const passwordCell = `<td class='border px-4 py-2'>${entry.password}</td>`;
+                        const dobCell = `<td class='border px-4 py-2'>${entry.dob}</td>`;
+                        const acceptTermsCell = `<td class='border px-4 py-2'>${entry.acceptTermsandconditions}</td>`;
+                        const row = `<tr>${nameCell} ${emailCell} ${passwordCell} ${dobCell} ${acceptTermsCell}</tr>`;
+                        return row;
+                    }).join("\n");
+                    const table = `<table class="table-auto w-full"><tr>
+    <th class="px-4 py-2">Name</th>
+    <th class="px-4 py-2">Email</th>
+    <th class="px-4 py-2">Password</th>
+    <th class="px-4 py-2">dob</th>
+    <th class="px-4 py-2">accepted terms?</th>
+    </tr>${tableEntries}</table>`;
+                    let details = document.getElementById("user-entries");
+                    details.innerHTML = table;
+                }
+                const saveUserForm = (event) => {
+                    event.preventDefault();
+                    const name = document.getElementById("name").value;
+                    const email = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
+                    const dob = document.getElementById("dob").value;
+                    const acceptTermsandconditions = document.getElementById("acceptTerms").checked;
+
+                    const entry = {
+                        name,
+                        email,
+                        password,
+                        dob,
+                        acceptTermsandconditions
+                    };
+                    userEntries.push(entry);
+                    localStorage.setItem("user-entries", JSON.stringify(userEntries));
+                    displayEntries();
+                }
+                userForm.addEventListener("submit", saveUserForm);
+                displayEntries();
+        </script>
+</body>
+
+</html>
+
+
