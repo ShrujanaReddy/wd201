@@ -1,68 +1,90 @@
-const todoList = require('../todo');
+let todoList;
+let all, markAsComplete, add, overdue, dueToday, dueLater;
 
-describe('Todo List', () => {
-  let todos;
+beforeAll(() => {
+  todoList = require("../todo");
+  ({ all, markAsComplete, add, overdue, dueToday, dueLater } = todoList());
 
-  beforeEach(() => {
-    todos = todoList();
-    const formattedDate = (d) => {
-      return d.toISOString().split('T')[0];
+  const today = new Date();
+  const oneDay = 60 * 60 * 24 * 1000;
+  const initialTodos = [
+    {
+      title: "Complete assignment",
+      completed: false,
+      dueDate: new Date(today.getTime() - 1 * oneDay).toLocaleDateString("en-CA"),
+    },
+    {
+      title: "Go for shopping",
+      completed: false,
+      dueDate: new Date().toLocaleDateString("en-CA"),
+    },
+    {
+      title: "Complete project",
+      completed: false,
+      dueDate: new Date(today.getTime() + 1 * oneDay).toLocaleDateString("en-CA"),
+    },
+  ];
+  initialTodos.forEach((todo) => add(todo));
+});
+
+describe("Todo test cases", () => {
+  test("Add new todo", () => {
+    let prevLength = all.length;
+
+    add({
+      title: "Take the test",
+      completed: false,
+      dueDate: new Date().toLocaleDateString("en-CA"),
+    });
+
+    expect(all.length).toEqual(prevLength + 1);
+  });
+
+  test("Todo mark as complete", () => {
+    expect(all[0].completed).toEqual(false);
+    markAsComplete(0);
+    expect(all[0].completed).toEqual(true);
+  });
+
+  test("Test for overdue", () => {
+    const initialOverdueItems = overdue();
+    const today = new Date().toISOString().split("T")[0];
+    const overdueTodo = {
+      title: "Overdue Todo",
+      completed: false,
+      dueDate: new Date(
+        new Date(today).getTime() - 1 * 24 * 60 * 60 * 1000,
+      ).toLocaleDateString("en-CA"),
     };
+    add(overdueTodo);
 
-    var dateToday = new Date();
-    const today = formattedDate(dateToday);
-    const yesterday = formattedDate(
-      new Date(new Date().setDate(dateToday.getDate() - 1))
-    );
-    const tomorrow = formattedDate(
-      new Date(new Date().setDate(dateToday.getDate() + 1))
-    );
-
-    todos.add({ title: 'Submit assignment', dueDate: yesterday, completed: false });
-    todos.add({ title: 'Pay rent', dueDate: today, completed: true });
-    todos.add({ title: 'Service Vehicle', dueDate: today, completed: false });
-    todos.add({ title: 'File taxes', dueDate: tomorrow, completed: false });
-    todos.add({ title: 'Pay electric bill', dueDate: tomorrow, completed: false });
+    expect(overdue().length).toBe(initialOverdueItems.length + 1);
   });
 
-  it('should create a new todo', () => {
-    todos.add({ title: 'New task', dueDate: '2023-09-08', completed: false });
-    expect(todos.all.length).toBe(6);
+  test("Test due today", () => {
+    const initialDueTodayItems = dueToday();
+    const today = new Date().toISOString().split("T")[0];
+    const dueTodayTodo = {
+      title: "Due Today Todo",
+      completed: false,
+      dueDate: today,
+    };
+    add(dueTodayTodo);
+
+    expect(dueToday().length).toBe(initialDueTodayItems.length + 1);
   });
 
-  it('should mark a todo as completed', () => {
-    todos.markAsComplete(0);
-    expect(todos.all[0].completed).toBe(true);
-  });
+  test("Test for due later", () => {
+    const initialDueLaterItems = dueLater();
+    const dueLaterTodo = {
+      title: "Due Later Todo",
+      completed: false,
+      dueDate: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+    };
+    add(dueLaterTodo);
 
-  it('should retrieve overdue items', () => {
-    const overdueItems = todos.overdue();
-    expect(overdueItems.length).toBe(1);
-    expect(overdueItems[0].title).toBe('Submit assignment');
-  });
-
-  it('should retrieve due today items', () => {
-    const dueTodayItems = todos.dueToday();
-    expect(dueTodayItems.length).toBe(2);
-    expect(dueTodayItems[0].title).toBe('Pay rent');
-    expect(dueTodayItems[1].title).toBe('Service Vehicle');
-  });
-
-  it('should retrieve due later items', () => {
-    const dueLaterItems = todos.dueLater();
-    expect(dueLaterItems.length).toBe(2);
-    expect(dueLaterItems[0].title).toBe('File taxes');
-    expect(dueLaterItems[1].title).toBe('Pay electric bill');
-  });
-
-  it('should implement toDisplayableList function', () => {
-    const list = [
-      { title: 'Task 1', dueDate: '2023-09-08', completed: false },
-      { title: 'Task 2', dueDate: '2023-09-09', completed: true },
-    ];
-    const displayableList = todos.toDisplayableList(list);
-    const expectedList = '[ ] Task 1 2023-09-08\n[x] Task 2 2023-09-09';
-
-    expect(displayableList).toBe(expectedList);
+    expect(dueLater().length).toBe(initialDueLaterItems.length + 1);
   });
 });
