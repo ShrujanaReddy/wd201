@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "jest": "^29.6.4",
+    "prettier": "^3.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test && npx prettier --write ."
+    }
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "moduleFileExtensions": ["js"]
+  }
+}
