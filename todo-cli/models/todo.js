@@ -105,9 +105,21 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     displayableString() {
-  let checkbox = this.completed ? '[x]' : '[ ]';
-  let formattedDueDate = this.dueDate instanceof Date ? this.formatDate(this.dueDate) : this.dueDate;
-  return `${this.id}. ${checkbox} ${this.title} (${formattedDueDate})`;
+   let checkbox = this.completed ? '[x]' : '[ ]';
+
+  if (this.completed) {
+    // For completed todos, no need to display the due date
+    return `${this.id}. ${checkbox} ${this.title}`;
+  }
+
+  if (this.dueDate instanceof Date) {
+    // For todos with a valid date, format and display the due date
+    let formattedDueDate = this.formatDate(this.dueDate);
+    return `${this.id}. ${checkbox} ${this.title} ${formattedDueDate}`;
+  }
+
+  // For todos with no date information, just display the title
+  return `${this.id}. ${checkbox} ${this.title}`;
 }
 
 formatDate(date) {
