@@ -105,17 +105,20 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     displayableString() {
-      let checkbox = this.completed ? '[x]' : '[ ]';
-      const currentDate=new Date();
-      if (this.dueDate!=currentDate) {
-        // For completed todos with a due date, display the due date
-        let formattedDueDate = this.formatDate(this.dueDate);
-        return `${this.id}. ${checkbox} ${this.title} ${formattedDueDate}`;
-      } else {
-        // For other cases (incomplete or no date), omit the due date
-        return `${this.id}. ${checkbox} ${this.title}`;
-      }
-    }
+  let checkbox = this.completed ? '[x]' : '[ ]';
+  const currentDate = new Date();
+  //let formattedDueDate = this.formatDate(this.dueDate);
+  if (this.DueDate != currentDate) {
+    
+    let formattedDueDate = this.formatDate(this.dueDate);
+    return `${this.id}. ${checkbox} ${this.title} ${formattedDueDate}`;
+    
+  } else {
+    
+    return `${this.id}. ${checkbox} ${this.title}`;
+  }
+}
+
 
     formatDate(date) {
       const dateObject = new Date(date);
