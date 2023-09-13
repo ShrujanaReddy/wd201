@@ -105,7 +105,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     displayableString() {
-   let checkbox = this.completed ? '[x]' : '[ ]';
+  let checkbox = this.completed ? '[x]' : '[ ]';
 
   if (this.completed && this.dueDate instanceof Date) {
     // For completed todos with a due date, display the due date
@@ -115,6 +115,13 @@ module.exports = (sequelize, DataTypes) => {
     // For other cases (incomplete or no date), omit the due date
     return `${this.id}. ${checkbox} ${this.title}`;
   }
+}
+
+formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
   }

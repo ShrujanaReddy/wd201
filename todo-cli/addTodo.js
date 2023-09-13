@@ -1,5 +1,4 @@
-// addTodo.js
-var argv = require("minimist")(process.argv.slice(2));
+const argv = require("minimist")(process.argv.slice(2));
 const db = require("./models/index");
 
 const createTodo = async (params) => {
@@ -10,14 +9,13 @@ const createTodo = async (params) => {
   }
 };
 
-const getJSDate = (days) => {
-  if (!Number.isInteger(days)) {
-    throw new Error("Need to pass an integer as days");
-  }
-  const today = new Date();
-  const oneDay = 60 * 60 * 24 * 1000;
-  return new Date(today.getTime() + days * oneDay);
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
+
 (async () => {
   const { title, dueInDays } = argv;
   if (!title || dueInDays === undefined) {
@@ -25,6 +23,9 @@ const getJSDate = (days) => {
       'title and dueInDays are required. \nSample command: node addTodo.js --title="Buy milk" --dueInDays=-2 '
     );
   }
-  await createTodo({ title, dueDate: getJSDate(dueInDays), completed: false });
+
+  const dueDate = formatDate(new Date(new Date().getTime() + dueInDays * 24 * 60 * 60 * 1000));
+
+  await createTodo({ title, dueDate, completed: false });
   await db.Todo.showList();
 })();
