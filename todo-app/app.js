@@ -38,10 +38,10 @@ app.put("/todos/:id/markAsCompleted",async (req,res) => {
         return res.status(422).json(error)
     }
 })
-app.delete("/todos/:id", async function (request, response) {
-  console.log("We must delete a Todo with ID: ", request.params.id);
-  const delete_todo = await Todo.destroy({ where: { id: request.params.id } });
-  response.send(delete_todo ? true : false);
+app.delete("/todos/:id", async function (req, res) {
+  console.log("We must delete a Todo with ID: ", req.params.id)
+  const deleteTodo = await Todo.destroy({ where: { id: req.params.id } })
+  res.send(deleteTodo ? true : false)
 })
 
 module.exports=app;
