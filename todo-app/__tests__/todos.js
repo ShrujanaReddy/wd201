@@ -38,18 +38,18 @@ describe("Todo test suite",()=> {
     expect(markedTodo.completed).toBe(true);
     })
 
-    test('deletes a todo', async () => {
-    const createResponse = await agent.post('/todos').send({
-      title: 'To be deleted',
-      dueDate: new Date().toISOString(),
-      completed: false,
-    })
-    const createdTodo = JSON.parse(createResponse.text);
-    const deleteResponse = await agent.delete(`/todos/${createdTodo.id}`);
-    expect(deleteResponse.statusCode).toBe(200);
-    const deletionResult = JSON.parse(deleteResponse.text);
-    expect(deletionResult.success).toBe(true);
-    })
+test('deletes a todo by ID if it exists and sends a boolean response', async () => {
+  const createResponse = await agent.post('/todos').send({
+    title: 'To be deleted',
+    dueDate: new Date().toISOString(),
+    completed: false,
+  })
+  const createdTodo = JSON.parse(createResponse.text)
+  const deleteResponse = await agent.delete(`/todos/${createdTodo.id}`)
+  const deletionResult = JSON.parse(deleteResponse.text)
+  expect(deletionResult.success).toBe(true)
+  expect(deleteResponse.statusCode).toBe(200);
+})
 
     test('gets all todos', async () => {
     await agent.post('/todos').send({
@@ -61,10 +61,10 @@ describe("Todo test suite",()=> {
       title: 'Task 2',
       dueDate: new Date().toISOString(),
       completed: true,
-    });
+    })
     const getAllResponse = await agent.get('/todos');
     expect(getAllResponse.statusCode).toBe(200);
     const allTodos = JSON.parse(getAllResponse.text);
     expect(Array.isArray(allTodos)).toBe(true);
-  });
+  })
 })
