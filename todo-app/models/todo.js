@@ -21,10 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     static getTodos() {
       return this.findAll()
     }
-    static async deleteTodo({id}) {
-      const deletedrows=await this.destroy({where:{id:id}})
-      return deletedrows===1
-    }
+    
   }
   Todo.init({
     title: DataTypes.STRING,
