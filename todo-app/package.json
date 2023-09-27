@@ -9,7 +9,7 @@
     "db:create:test": "npx sequelize-cli db:create --env test",
     "pretest": "npx sequelize-cli db:drop --env test && npx sequelize-cli db:create --env test",
     "test": "jest --detectOpenHandles",
-    "prepare": "cd..&&husky install todo-app\\.husky"
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC", 
