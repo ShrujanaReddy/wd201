@@ -1,4 +1,6 @@
 body {
-    color:gray;
-    font-family:'Courier New', Courier, monospace;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.Todo-Item:hover .trash-icon {
+    display:block;
 }

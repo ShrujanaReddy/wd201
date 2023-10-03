@@ -4,11 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./css/styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Todo App</title>
 </head>
 <body>
-    <%- include('header.ejs') %>
-    <%- include('todos.ejs') %>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
+            <%- include('header.ejs') %>
+            <form>
+                <div class="flex gap-2 mt-5">
+                    <div class="flex-auto">
+                        <input type="text" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm h-full mr-2" required />
+                    </div>
+                    <div class="flex-auto">
+                        <input type="date" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2"/>
+                    </div>
+                    <div class="flex-none">
+                        <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded mr-2">Add</button>
+                    </div>
+                </div>
+            </form>
+            <div>
+                <div class="flex mt-5">
+                    <h5 class="text-black-600 font-semibold flex-auto display-inline">Overdue</h5>
+                    <div
+                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
+                        <span class="text-black text-sm">
+                            <%= allTodos.length %>
+                        </span>
+                    </div>
+                </div>
+                <%- include('todos.ejs') %>
+                <div class="flex mt-5">
+                    <h5 class="text-black-600 font-semibold flex-auto">Due Today</h5>
+                    <div
+                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
+                        <span class="text-black text-sm">
+                            <%= allTodos.length %>
+                        </span>
+                    </div>
+                </div>
+                <%- include('todos.ejs') %>
+                <div class="flex mt-5">
+                    <h5 class="text-black-600 font-semibold flex-auto">Due Later</h5>
+                    <div
+                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
+                        <span class="text-black text-sm">
+                            <%= allTodos.length %>
+                        </span>
+                    </div>
+                </div>
+                <%- include('todos.ejs') %>
+            </div>
+        </div>
+    </div>
     <%- include('footer.ejs') %>
 </body>
 </html>
