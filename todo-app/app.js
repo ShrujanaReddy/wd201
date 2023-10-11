@@ -1,22 +1,21 @@
-const express= require('express')
-var csrf=require("tiny-csrf")
-const app=express()
-const {Todo}=require('./models')
-const bodyParser=require('body-parser')
-var cookieParser=require("cookie-parser")
-app.use(bodyParser.json())
-const path=require('path')
-app.use(express.urlencoded({extended:false}))
-app.use(cookieParser("ssh! some secret string"))
-app.use(csrf("this_should_be_32_character_long",["POST","PUT","DELETE"]))
+const express = require('express');
+const csrf = require("tiny-csrf");
+const app = express();
+const { Todo } = require('./models');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
-app.set("view engine","ejs")
+app.use(bodyParser.json());
+app.use(cookieParser('ssh! some secret string'));
+app.use(csrf('this_should_be_32_character_long', ['POST', 'PUT', 'DELETE']));
 
-app.use(express.static(path.join(__dirname,'public')))
-app.get("/", async (req, res) => {
+app.set('view engine', 'ejs');
+
+app.use(express.static(__dirname + '/public'));
+
+app.get('/', async (req, res) => {
   try {
-    // Fetch all the lists in parallel
-    const [allTodos, overdueTodos, dueTodayTodos, dueLaterTodos,completed] = await Promise.all([
+    const [allTodos, overdueTodos, dueTodayTodos, dueLaterTodos, completed] = await Promise.all([
       Todo.getTodos(),
       Todo.overdue(),
       Todo.dueToday(),
@@ -24,9 +23,8 @@ app.get("/", async (req, res) => {
       Todo.completed(),
     ]);
 
-    if (req.accepts("html")) {
-      // Render HTML response
-      res.render("index", {
+    if (req.accepts('html')) {
+      res.render('index', {
         allTodos,
         overdueTodos,
         dueTodayTodos,
@@ -35,7 +33,6 @@ app.get("/", async (req, res) => {
         csrfToken: req.csrfToken(),
       });
     } else {
-      // Respond with JSON
       res.json({
         allTodos,
         overdueTodos,
@@ -46,55 +43,53 @@ app.get("/", async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 });
 
-
-
-app.get("/todos",async (req,res) => {
-    //res.send("Hello World")
-    console.log("Todos list")
-    try {
-        const todo=await Todo.getTodos()
-        return res.json(todo)
-    } catch(error) {
-        console.log(error)
-        return res.status(422).json(error)
-    }
-})
-app.post("/todos",async (req,res) => {
-    console.log("Creating a todo",req.body)
-    try {
-        const todo=await Todo.addTodo({title:req.body.title,dueDate:req.body.dueDate,completed:false})
-        return res.redirect("/")
-    }
-    catch(error) {
-        console.log(error)
-        return res.status(422).json(error)
-    }
-    
-})
-app.put("/todos/:id",async (req,res) => {
-    console.log("We must update a todo with id:",req.params.id)
-    const todo=await Todo.findByPk(req.params.id)
-    try {
-        const updatedTodo=await todo.setCompletionStatus(req.body.completed)
-        return res.json(updatedTodo)
-    } catch(error) {
-        console.log(error)
-        return res.status(422).json(error)
-    }
-})
-app.delete("/todos/:id", async function (req, res) {
-  console.log("We must delete a Todo with ID: ", req.params.id)
+app.get('/todos', async (req, res) => {
   try {
-    await Todo.remove(req.params.id)
-    return res.json({success:true})
+    const todos = await Todo.getTodos();
+    res.json(todos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
   }
-  catch (error) {
-    return res.status(422).json(error)
-  }
-})
+});
 
-module.exports=app;
+app.post('/todos', async (req, res) => {
+  try {
+    const todo = await Todo.addTodo({
+      title: req.body.title,
+      dueDate: req.body.dueDate,
+      completed: false,
+    });
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+});
+
+app.put('/todos/:id', async (req, res) => {
+  try {
+    const todo = await Todo.findByPk(req.params.id);
+    const updatedTodo = await todo.setCompletionStatus(req.body.completed);
+    res.json(updatedTodo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+});
+
+app.delete('/todos/:id', async (req, res) => {
+  try {
+    await Todo.remove(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+});
+
+module.exports = app;
