@@ -10,11 +10,13 @@
     <script>
         var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         function updateTodo(id) {
-            fetch(`/todos/${id}/markAsCompleted`, {
+             const bool = document.querySelector(`#checkbox-${id}`).checked; 
+            fetch(`/todos/${id}`, {
                 method:"put",
                 headers:{"Content-Type":"application/json"},
                 body: JSON.stringify({
-                    "_csrf":token
+                    "_csrf":token,
+                    completed:bool
                 })
             })
             .then((res)=>{
@@ -52,7 +54,7 @@
                         <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm h-full mr-2" required />
                     </div>
                     <div class="flex-auto">
-                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2"/>
+                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2" required/>
                     </div>
                     <div class="flex-none">
                         <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded mr-2">Add</button>

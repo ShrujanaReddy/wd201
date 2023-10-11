@@ -55,6 +55,20 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+    deletetodo() {
+      return this.removetask();
+    }
+    static completedItems() {
+      return this.findAll({
+        where: {
+          completed: true,
+        },
+        order: [["id", "ASC"]],
+      });
+    }
+    setCompletionStatus(bool) {
+      return this.update({ completed: bool });
+    }
   }
   Todo.init({
     title: DataTypes.STRING,

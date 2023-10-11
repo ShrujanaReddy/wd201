@@ -72,11 +72,11 @@ app.post("/todos",async (req,res) => {
     }
     
 })
-app.put("/todos/:id/markAsCompleted",async (req,res) => {
+app.put("/todos/:id",async (req,res) => {
     console.log("We must update a todo with id:",req.params.id)
     const todo=await Todo.findByPk(req.params.id)
     try {
-        const updatedTodo=await todo.markAsCompleted()
+        const updatedTodo=await todo.setCompletionStatus(req.body.completed)
         return res.json(updatedTodo)
     } catch(error) {
         console.log(error)
