@@ -25,27 +25,33 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where : {
           dueDate:{
-            [Op.gt]:new Date(),
+            [Op.gt]:new Date().toLocaleDateString("en-CA"),
           },
+          completed: false,
         },
+        order: [["id", "ASC"]],
       });
     }
     static async overdue() {
       return this.findAll({
         where : {
           dueDate:{
-            [Op.lt]:new Date(),
+            [Op.lt]:new Date().toLocaleDateString("en-CA"),
           },
+          completed:false,
         },
+        order: [["id", "ASC"]],
       });
     }
     static async dueToday() {
       return this.findAll({
         where : {
           dueDate:{
-            [Op.eq]:new Date(),
+            [Op.eq]:new Date().toLocaleDateString("en-CA"),
           },
+          completed: false,
         },
+        order: [["id", "ASC"]],
       });
     }
     static async remove(id) {
