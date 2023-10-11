@@ -92,6 +92,17 @@
                     </div>
                 </div>
                 <%- include('todos.ejs',{data:dueLaterTodos}) %>
+                <div id="count-due-later" class="flex mt-5">
+                    <h5 class="text-black-600 font-semibold flex-auto">Completed Items</h5>
+                    <div
+                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
+                        <span class="text-black text-sm">
+                            <%= completed.length %>
+                        </span>
+                    </div>
+                </div>
+                <%- include('todos.ejs', {data: completed}) %>
+                    
             </div>
         </div>
     </div>

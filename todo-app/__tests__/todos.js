@@ -55,7 +55,7 @@ test("Creating a sample task due later", async () => {
   const res = await agent.post("/todos").send({
     title: "Plan for Tomorrow",
     dueDate: futureDate.toISOString().split("T")[0],
-    completed: true,
+    completed: false,
   });
   expect(res.status).toBe(500); 
 });

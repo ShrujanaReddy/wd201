@@ -16,11 +16,12 @@ app.use(express.static(path.join(__dirname,'public')))
 app.get("/", async (req, res) => {
   try {
     // Fetch all the lists in parallel
-    const [allTodos, overdueTodos, dueTodayTodos, dueLaterTodos] = await Promise.all([
+    const [allTodos, overdueTodos, dueTodayTodos, dueLaterTodos,completed] = await Promise.all([
       Todo.getTodos(),
       Todo.overdue(),
       Todo.dueToday(),
       Todo.dueLater(),
+      Todo.completed(),
     ]);
 
     if (req.accepts("html")) {
@@ -30,6 +31,7 @@ app.get("/", async (req, res) => {
         overdueTodos,
         dueTodayTodos,
         dueLaterTodos,
+        completed,
         csrfToken: req.csrfToken(),
       });
     } else {
@@ -39,6 +41,7 @@ app.get("/", async (req, res) => {
         overdueTodos,
         dueTodayTodos,
         dueLaterTodos,
+        completed,
       });
     }
   } catch (error) {

@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
     deletetodo() {
       return this.removetask();
     }
-    static completedItems() {
+    static completed() {
       return this.findAll({
         where: {
           completed: true,
