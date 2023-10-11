@@ -3,21 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <link href="./css/styles.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Todo App</title>
+    <script>
+        var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+        function updateTodo(id) {
+            fetch(`/todos/${id}/markAsCompleted`, {
+                method:"put",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    "_csrf":token
+                })
+            })
+            .then((res)=>{
+                if(res.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch((err)=>console.error(err));
+        }
+        function deleteTodo(id) {
+                fetch(`/todos/${id}`, {
+                    method: "delete",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "_csrf": token
+                    })
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch((err) => console.error(err));
+            }
+    </script>
 </head>
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
-            <form>
+            <form action="/todos" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <div class="flex gap-2 mt-5">
-                    <div class="flex-auto">
-                        <input type="text" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm h-full mr-2" required />
+                    <div class="flex-auto"> 
+                        <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm h-full mr-2" required />
                     </div>
                     <div class="flex-auto">
-                        <input type="date" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2"/>
+                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2"/>
                     </div>
                     <div class="flex-none">
                         <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded mr-2">Add</button>
@@ -30,31 +65,31 @@
                     <div
                         class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
                         <span class="text-black text-sm">
-                            <%= allTodos.length %>
+                            <%= overdueTodos.length %>
                         </span>
                     </div>
                 </div>
-                <%- include('todos.ejs') %>
+                <%- include('todos.ejs',{data:overdueTodos}) %>
                 <div id="count-due-today" class="flex mt-5">
                     <h5 class="text-black-600 font-semibold flex-auto">Due Today</h5>
                     <div
                         class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
                         <span class="text-black text-sm">
-                            <%= allTodos.length %>
+                            <%= dueTodayTodos.length %>
                         </span>
                     </div>
                 </div>
-                <%- include('todos.ejs') %>
+                <%- include('todos.ejs',{data:dueTodayTodos}) %>
                 <div id="count-due-later" class="flex mt-5">
                     <h5 class="text-black-600 font-semibold flex-auto">Due Later</h5>
                     <div
                         class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
                         <span class="text-black text-sm">
-                            <%= allTodos.length %>
+                            <%= dueLaterTodos.length %>
                         </span>
                     </div>
                 </div>
-                <%- include('todos.ejs') %>
+                <%- include('todos.ejs',{data:dueLaterTodos}) %>
             </div>
         </div>
     </div>
