@@ -10,7 +10,7 @@
     <script>
         var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         function updateTodo(id) {
-             const bool = document.querySelector(`#checkbox-${id}`).checked; 
+             const bool = document.querySelector(`#todo-checkbox-${id}`).checked; 
             fetch(`/todos/${id}`, {
                 method:"put",
                 headers:{"Content-Type":"application/json"},
