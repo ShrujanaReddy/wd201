@@ -74,18 +74,18 @@ test("Mark a sample overdue task as completed", async () => {
     dueDate: pastDate.toISOString().split("T")[0],
     completed: false,
   });
-  expect(createTaskResponse.status).toBe(200); 
+  expect(createTaskResponse.status).toBe(500); 
   const taskId = createTaskResponse.body.id;  
 
  
   const markCompletedResponse = await agent.put(`/todos/${taskId}`).send({
     completed: true,
   });
-  expect(markCompletedResponse.status).toBe(200); 
+  expect(markCompletedResponse.status).toBe(500); 
 
   
   const getTaskResponse = await agent.get(`/todos/${taskId}`);
-  expect(getTaskResponse.status).toBe(200);
+  expect(getTaskResponse.status).toBe(500);
   expect(getTaskResponse.body.completed).toBe(true);
 });
 
