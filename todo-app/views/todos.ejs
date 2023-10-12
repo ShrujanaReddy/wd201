@@ -6,7 +6,7 @@
                     <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-50 ml-5">
                         <input id="todo-checkbox-<%= data[i].id %>" type="checkbox" <%=data[i].completed ? "checked" : "" %> onclick="updateTodo(<%=data[i].id %>)"
                             class="w-4 h-4 text-blue-600 bg-gray rounded border-gray-300">
-                        <label for="todo-checkbox-<%= data[i].id %>" class="ml-2 text-sm cursor-pointer text-gray-900">
+                        <label for="todo-checkbox-<%= data[i].id %>" class="ml-2 text-sm cursor-pointer text-gray-900"> onclick="updateTodo(<%=data[i].id %>)"
                             <%= data[i].title %>
                         </label>
                         <a href="#" class="hidden trash-icon ml-2" onclick="deleteTodo('<%=data[i].id %>')" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" 
