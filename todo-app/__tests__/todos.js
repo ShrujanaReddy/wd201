@@ -38,6 +38,56 @@ describe("Todo test suite",  ()=> {
   });
   expect(res.status).toBe(500); 
 });
+  test('marks a todo as complete', async () => {
+  // First, create a to-do item
+  let res = await agent.get("/");
+  let csrfToken = extractCsrfToken(res);
+
+  const createResponse = await agent.post('/todos').send({
+    title: 'Buy groceries',
+    dueDate: new Date().toISOString(),
+    completed: false,
+    "_csrf": csrfToken,
+  });
+
+  expect(createResponse.statusCode).toBe(201); 
+
+  const createdTodo = createResponse.body; 
+  const markCompleteResponse = await agent.put(`/todos/${createdTodo.id}`).send({
+    completed: true,
+    "_csrf": csrfToken,
+  });
+
+  expect(markCompleteResponse.statusCode).toBe(200);
+  const markedTodoResponse = await agent.get(`/todos/${createdTodo.id}`);
+
+  expect(markedTodoResponse.statusCode).toBe(200); 
+  const markedTodo = markedTodoResponse.body; 
+  expect(markedTodo.completed).toBe(true);
+});
+
+test("Mark a sample overdue task as completed", async () => {
+  const pastDate = new Date();
+  pastDate.setDate(pastDate.getDate() - 1);
+  const createTaskResponse = await agent.post("/todos").send({
+    title: "Yesterday's Task",
+    dueDate: pastDate.toISOString().split("T")[0],
+    completed: false,
+  });
+  expect(createTaskResponse.status).toBe(200); 
+  const taskId = createTaskResponse.body.id;  
+
+ 
+  const markCompletedResponse = await agent.put(`/todos/${taskId}`).send({
+    completed: true,
+  });
+  expect(markCompletedResponse.status).toBe(200); 
+
+  
+  const getTaskResponse = await agent.get(`/todos/${taskId}`);
+  expect(getTaskResponse.status).toBe(200);
+  expect(getTaskResponse.body.completed).toBe(true);
+});
 
 test("Create a sample task due today", async () => {
   const res = await agent.post("/todos").send({
