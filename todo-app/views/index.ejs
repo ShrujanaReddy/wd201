@@ -10,22 +10,32 @@
     <script>
         var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         function updateTodo(id) {
-             const bool = document.querySelector(`#todo-checkbox-${id}`).checked; 
-            fetch(`/todos/${id}`, {
-                method:"put",
-                headers:{"Content-Type":"application/json"},
-                body: JSON.stringify({
-                    "_csrf":token,
-                    completed:bool
-                })
-            })
-            .then((res)=>{
-                if(res.ok) {
-                    window.location.reload();
-                }
-            })
-            .catch((err)=>console.error(err));
+    const checkbox = document.querySelector(`#todo-checkbox-${id}`);
+    const currentStatus = checkbox.checked;
+    const newStatus = !currentStatus;
+
+    const requestBody = JSON.stringify({
+        _csrf: token, // Assuming token is available
+        completed: newStatus,
+    });
+
+    fetch(`/todos/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: requestBody,
+    })
+    .then((res) => {
+        if (res.ok) {
+            checkbox.checked = newStatus;
+        } else {
+            console.error('Update request failed:', res.status, res.statusText);
         }
+    })
+    .catch((err) => console.error(err));
+}
+
         function deleteTodo(id) {
                 fetch(`/todos/${id}`, {
                     method: "delete",
