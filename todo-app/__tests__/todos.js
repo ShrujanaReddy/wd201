@@ -80,3 +80,4 @@ test("Mark a sample overdue task as completed", async () => {
   expect(getTaskResponse.status).toBe(200);
   expect(getTaskResponse.body.completed).toBe(true);
 });
+});
