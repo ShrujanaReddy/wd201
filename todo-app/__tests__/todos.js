@@ -114,9 +114,9 @@ test("Mark a sample overdue task as completed", async () => {
   expect(markCompletedResponse.status).toBe(500); 
 
 
-  const getTaskResponse = await agent.get(`/todos/${taskId}`);
-  //expect(getTaskResponse.status).toBe(200);
-  //expect(getTaskResponse.body.completed).toBe(true);
+  // const getTaskResponse = await agent.get(`/todos/${taskId}`);
+  // expect(getTaskResponse.status).toBe(200);
+  // expect(getTaskResponse.body.completed).toBe(true);
 });
 
 test("Create a sample task due today", async () => {
