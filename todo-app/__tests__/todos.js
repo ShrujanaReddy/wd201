@@ -97,22 +97,33 @@ describe("Todo test suite",  ()=> {
   expect(parsedUpdateResponse.completed).toBe(true)
 });
 test("Mark a sample overdue task as completed", async () => {
+  const agent=request.agent(server)
+  await login(agent,"usera@test.com","12345678")
+  let res = await agent.get("/todos");
+  let csrfToken = extractCsrfToken(res);
   const pastDate = new Date();
   pastDate.setDate(pastDate.getDate() - 1);
   const createTaskResponse = await agent.post("/todos").send({
     title: "Yesterday's Task",
     dueDate: pastDate.toISOString().split("T")[0],
     completed: false,
+    _csrf: csrfToken,
   });
-  expect(createTaskResponse.status).toBe(500); 
-  const taskId = createTaskResponse.body.id;  
+  const groupedTodosResponse=await agent.get("/todos").set("Accept","application/json")
+  const parsedGroupedResponse=JSON.parse(groupedTodosResponse.text)
+  const dueTodayCount=parsedGroupedResponse.overdueTodos.length
+  const latestTodo=parsedGroupedResponse.overdueTodos[dueTodayCount-1]
+
+  res=await agent.get("/todos")
+  csrfToken=extractCsrfToken(res) 
 
 
-  const markCompletedResponse = await agent.put(`/todos/${taskId}`).send({
+  const markCompletedResponse = await agent.put(`/todos/${latestTodo.id}`).send({
+    _csrf:csrfToken,
     completed: true,
   });
-  expect(markCompletedResponse.status).toBe(500); 
-
+  const parsedUpdateResponse=JSON.parse(markCompletedResponse.text)
+  expect(parsedUpdateResponse.completed).toBe(true)
 
   // const getTaskResponse = await agent.get(`/todos/${taskId}`);
   // expect(getTaskResponse.status).toBe(200);
