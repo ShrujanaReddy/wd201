@@ -51,7 +51,7 @@ passport.use(new LocalStrategy({
     else
     return done(null,false,{message:"Invalid password"})
   }).catch((error)=>{
-    return done(err)
+    return done(error)
   })
 }))
 passport.serializeUser((user,done)=>{

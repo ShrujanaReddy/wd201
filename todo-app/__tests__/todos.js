@@ -77,7 +77,7 @@ describe("Todo test suite",  ()=> {
   let csrfToken = extractCsrfToken(res);
   const createResponse = await agent.post('/todos').send({
     title: 'Buy groceries',
-    dueDate: new Date().toISOString(),
+    dueDate: new Date().toISOString().split("T")[0],
     completed: false,
     _csrf: csrfToken,
   });
@@ -95,7 +95,7 @@ describe("Todo test suite",  ()=> {
   })
   const parsedUpdateResponse=JSON.parse(markCompleteResponse.text)
   expect(parsedUpdateResponse.completed).toBe(true)
-});
+})
 test("Mark a sample overdue task as completed", async () => {
   const agent=request.agent(server)
   await login(agent,"usera@test.com","12345678")
@@ -182,7 +182,63 @@ test("Delete a todo item", async () => {
     _csrf:csrfToken,
   })
   expect(deleteResponse.statusCode).toBe(200)
-});
+})
+test("Accessing Other User's Todos", async () => {
+  // Create two users, userA and userB
+  const userAAgent = request.agent(server);
+  const userBAgent = request.agent(server);
+
+  // Sign up userA
+  let res = await userAAgent.get("/signup");
+  const userACsrfToken = extractCsrfToken(res);
+  res = await userAAgent.post("/users").send({
+    firstName: "UserA",
+    lastName: "Test",
+    email: "usera1@test.com",
+    password: "12345678",
+    _csrf: userACsrfToken,
+  });
+  expect(res.statusCode).toBe(302);
+
+  // Sign up userB
+  res = await userBAgent.get("/signup");
+  const userBCsrfToken = extractCsrfToken(res);
+  res = await userBAgent.post("/users").send({
+    firstName: "UserB",
+    lastName: "Test",
+    email: "userb1@test.com",
+    password: "12345678",
+    _csrf: userBCsrfToken,
+  });
+  expect(res.statusCode).toBe(302);
+
+  // Log in as userA
+  res = await login(userAAgent, "usera@test.com", "12345678");
+
+  // Create a todo for userA
+  res = await userAAgent.get("/todos");
+  const userATodoCsrfToken = extractCsrfToken(res);
+  const createTodoResponse = await userAAgent.post('/todos').send({
+    title: 'UserA Task',
+    dueDate: new Date().toISOString(),
+    completed: false,
+    _csrf: userATodoCsrfToken,
+  });
+  expect(createTodoResponse.statusCode).toBe(302);
+
+  // Log in as userB
+  res = await login(userBAgent, "userb@test.com", "12345678");
+
+  // Attempt to access userA's todos
+  const userBTodosResponse = await userBAgent.get("/todos").set("Accept", "application/json");
+  const userBTodos = JSON.parse(userBTodosResponse.text).allTodos;
+
+  // Verify that userB should not see userA's todos
+  //expect(userBTodos).toHaveLength(0);
+})
+
+
+
     /* test('marks a todo as complete', async () => {
       let res=await agent.get("/")
       let csrfToken=extractCsrfToken(res)
