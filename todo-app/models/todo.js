@@ -23,8 +23,12 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
 
-    static getTodos() {
-      return this.findAll();
+    static getTodos(userId) {
+      return this.findAll({
+        where:{
+          userId
+        }
+      });
     }
 
     static async dueLater(userId) {

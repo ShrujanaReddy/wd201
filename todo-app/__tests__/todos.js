@@ -234,7 +234,7 @@ test("Accessing Other User's Todos", async () => {
   const userBTodos = JSON.parse(userBTodosResponse.text).allTodos;
 
   // Verify that userB should not see userA's todos
-  //expect(userBTodos).toHaveLength(0);
+  expect(userBTodos).toHaveLength(0);
 })
 
 
