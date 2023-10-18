@@ -7,105 +7,19 @@
     <link href="./css/styles.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Todo App</title>
-    <script>
-        var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-        function updateTodo(id) {
-             const bool = document.querySelector(`#checkbox-${id}`).checked; 
-            fetch(`/todos/${id}`, {
-                method:"put",
-                headers:{"Content-Type":"application/json"},
-                body: JSON.stringify({
-                    "_csrf":token,
-                    completed:bool
-                })
-            })
-            .then((res)=>{
-                if(res.ok) {
-                    window.location.reload();
-                }
-            })
-            .catch((err)=>console.error(err));
-        }
-        function deleteTodo(id) {
-                fetch(`/todos/${id}`, {
-                    method: "delete",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        "_csrf": token
-                    })
-                })
-                    .then((res) => {
-                        if (res.ok) {
-                            window.location.reload();
-                        }
-                    })
-                    .catch((err) => console.error(err));
-            }
-    </script>
+    
 </head>
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
-            <form action="/todos" method="post">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                <div class="flex gap-2 mt-5">
-                    <div class="flex-auto"> 
-                        <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm h-full mr-2" required />
-                    </div>
-                    <div class="flex-auto">
-                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-black-900 w-full h-full p-2 text-sm mr-2" required/>
-                    </div>
-                    <div class="flex-none">
-                        <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded mr-2">Add</button>
-                    </div>
-                </div>
-            </form>
-            <div>
-                <div id="count-overdue" class="flex mt-5">
-                    <h5 class="text-black-600 font-semibold flex-auto display-inline">Overdue</h5>
-                    <div
-                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
-                        <span class="text-black text-sm">
-                            <%= overdueTodos.length %>
-                        </span>
-                    </div>
-                </div>
-                <%- include('todos.ejs',{data:overdueTodos}) %>
-                <div id="count-due-today" class="flex mt-5">
-                    <h5 class="text-black-600 font-semibold flex-auto">Due Today</h5>
-                    <div
-                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
-                        <span class="text-black text-sm">
-                            <%= dueTodayTodos.length %>
-                        </span>
-                    </div>
-                </div>
-                <%- include('todos.ejs',{data:dueTodayTodos}) %>
-                <div id="count-due-later" class="flex mt-5">
-                    <h5 class="text-black-600 font-semibold flex-auto">Due Later</h5>
-                    <div
-                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
-                        <span class="text-black text-sm">
-                            <%= dueLaterTodos.length %>
-                        </span>
-                    </div>
-                </div>
-                <%- include('todos.ejs',{data:dueLaterTodos}) %>
-                <div id="count-due-later" class="flex mt-5">
-                    <h5 class="text-black-600 font-semibold flex-auto">Completed Items</h5>
-                    <div
-                        class="w-6 h-5 bg-purple-50 rounded-lg-500 flex items-center justify-center rounded border border-gray-900 flex-none ml-2">
-                        <span class="text-black text-sm">
-                            <%= completed.length %>
-                        </span>
-                    </div>
-                </div>
-                <%- include('todos.ejs', {data: completed}) %>
-                    
+            <p class="py-2">Welcome to the ToDo Manager</p>
+            <p class="py-2">New here? <a href="/signup" class="text-green-600">Sign-up Now!</a></p>
+            <p class="py-2">Already have an account? <a href="/login" class="text-green-600">Sign-in</a></p>
+            
             </div>
         </div>
     </div>
-    <%- include('footer.ejs') %>
+    
 </body>
 </html>
