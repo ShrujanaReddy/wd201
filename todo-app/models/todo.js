@@ -61,9 +61,9 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: new Date().toISOString().split('T')[0],
-          completed: false,
         },
         userId,
+        completed: false,
         order: [['id', 'ASC']],
       });
     }
