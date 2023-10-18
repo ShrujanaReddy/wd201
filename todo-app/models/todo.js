@@ -60,10 +60,12 @@ module.exports = (sequelize, DataTypes) => {
     static async dueToday(userId) {
       return this.findAll({
         where: {
-          dueDate: new Date().toISOString().split('T')[0],
-        },
+          dueDate: {
+            [Op.eq]: new Date().toISOString().split('T')[0],
+          },
         userId,
         completed: false,
+      },
         order: [['id', 'ASC']],
       });
     }
